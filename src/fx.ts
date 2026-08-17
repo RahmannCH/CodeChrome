@@ -120,7 +120,7 @@ export const streamAi = async (
 
   if (provider === 'gemini') {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${encodeURIComponent(apiKey)}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:streamGenerateContent?key=${encodeURIComponent(apiKey)}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -223,3 +223,70 @@ export const streamAi = async (
     }
   }
 };
+
+import { brandPresets } from './config';
+import type { BrandPreset } from './config';
+
+export const findBrandPreset = (rawQuery: string): BrandPreset | null => {
+  const query = rawQuery.trim().toLowerCase();
+  if (!query) return null;
+
+  // First check exact match on trigger or alias
+  const exact = brandPresets.find(b => 
+    b.trigger.toLowerCase() === query || 
+    b.id.toLowerCase() === query ||
+    b.aliases.some(a => a.toLowerCase() === query)
+  );
+  if (exact) return exact;
+
+  // Then check prefix match (e.g., 'you' -> youtube, 'spot' -> spotify, 'git' -> github)
+  const prefixMatch = brandPresets.find(b =>
+    b.aliases.some(a => a.toLowerCase().startsWith(query)) ||
+    b.name.toLowerCase().startsWith(query)
+  );
+  if (prefixMatch) return prefixMatch;
+
+  return null;
+};
+
+export const fetchSearchSuggestions = async (rawQuery: string, matchedPreset?: BrandPreset | null): Promise<string[]> => {
+  const query = rawQuery.trim();
+  if (!query) return [];
+
+  // If a brand preset matches, prioritize its curated recommendations
+  if (matchedPreset) {
+    const filtered = matchedPreset.recommendations.filter(r => 
+      r.toLowerCase().includes(query.toLowerCase()) || query.length <= 3
+    );
+    if (filtered.length > 0) return filtered;
+    return matchedPreset.recommendations;
+  }
+
+  // Live Google Search Suggestion fetch with fallback
+  try {
+    const res = await fetch(`https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(query)}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && Array.isArray(data[1])) {
+        const liveSuggestions = data[1].slice(0, 9);
+        if (liveSuggestions.length > 0) return liveSuggestions;
+      }
+    }
+  } catch {
+    // If CORS or offline, fallback to synthetic smart expansions
+  }
+
+  // Synthetic smart suggestions fallback
+  const qLower = query.toLowerCase();
+  return [
+    query,
+    `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+    `${qLower} web`,
+    `${qLower} online`,
+    `${qLower} app`,
+    `${qLower} login`,
+    `${qLower} download`,
+    `${qLower} official site`,
+  ];
+};
+

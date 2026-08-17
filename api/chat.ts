@@ -18,7 +18,7 @@ export default async function handler(req: any, res: any) {
     }
 
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${finalApiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:streamGenerateContent?key=${finalApiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

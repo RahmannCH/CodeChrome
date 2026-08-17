@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useAnimationControls } from 'framer-motion';
 import { macros as defaultMacros, engines } from './config';
 import type { Macro } from './config';
-import { playClick, startMatrix, streamAi } from './fx';
+import { playClick, startMatrix, streamAi, findBrandPreset, fetchSearchSuggestions } from './fx';
 import type { AiProvider } from './fx';
 import './index.css';
 
@@ -176,7 +176,7 @@ function AppIcon({ name }: { name: string }) {
 export default function App() {
   const [mode, setMode] = useState<Mode>('default');
   const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<{label: string, value: string, prefix?: string}[]>([]);
+  const [recommendations, setRecommendations] = useState<string[]>([]);
   const [selIndex, setSelIndex] = useState(-1);
   const [time, setTime] = useState(new Date());
   const [launch, setLaunch] = useState<Launch | null>(null);
@@ -234,6 +234,7 @@ export default function App() {
   const [pageDir, setPageDir] = useState(0);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const aiInputRef = useRef<HTMLInputElement>(null);
 
   const svgControls = useAnimationControls();
   const pathControls = useAnimationControls();
@@ -251,6 +252,11 @@ export default function App() {
   const pageCount = Math.ceil(macrosList.length / perPage);
   const currentMacros = macrosList.slice(page * perPage, (page + 1) * perPage);
 
+  const matchedBrand = findBrandPreset(query);
+  const activeMacro = macrosList.find(m => query.trim().split(' ')[0] === m.trigger);
+  const curColor = matchedBrand ? matchedBrand.color : (activeMacro ? activeMacro.color : '#64748b');
+  const badgeText = matchedBrand ? matchedBrand.marqueeText : 'SEARCH';
+
   useEffect(() => { document.title = tabTitle; localStorage.setItem('codechrome.title', tabTitle); }, [tabTitle]);
   useEffect(() => { localStorage.setItem('codechrome.macros', JSON.stringify(macrosList)); }, [macrosList]);
   useEffect(() => { localStorage.setItem('codechrome.cols', String(gridCols)); }, [gridCols]);
@@ -258,7 +264,26 @@ export default function App() {
   useEffect(() => { setPage(current => Math.min(current, Math.max(0, pageCount - 1))); }, [pageCount]);
 
   useEffect(() => { const t = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(t); }, []);
-  useEffect(() => { if (!showSettings) inputRef.current?.focus(); }, [mode, showSettings]);
+  useEffect(() => {
+    if (aiOpen) {
+      aiInputRef.current?.focus();
+      return;
+    }
+    if (!showSettings) inputRef.current?.focus();
+  }, [mode, showSettings, aiOpen]);
+
+  // Fetch search recommendations real-time when query changes
+  useEffect(() => {
+    if (!query.trim()) {
+      setRecommendations([]);
+      return;
+    }
+    let cancelled = false;
+    fetchSearchSuggestions(query, matchedBrand).then(res => {
+      if (!cancelled) setRecommendations(res);
+    });
+    return () => { cancelled = true; };
+  }, [query, matchedBrand?.id]);
 
   // Matrix Rain effect hook
   useEffect(() => {
@@ -341,11 +366,21 @@ export default function App() {
       askAi(txt.substring(4));
       return;
     }
+    // Direct URL check
+    if (txt.startsWith('http://') || txt.startsWith('https://')) {
+      redirect(txt);
+      return;
+    }
     const [head, ...tail] = txt.split(/\s+/);
     const macro = macrosList.find(m => m.trigger === head);
     if (macro) {
       if (!tail.length) redirect(macro.url);
       else redirect(`${macro.url}/search?q=${encodeURIComponent(tail.join(' '))}`);
+      return;
+    }
+    const preset = findBrandPreset(txt);
+    if (preset && txt.toLowerCase() === preset.trigger.toLowerCase()) {
+      redirect(preset.directUrl);
       return;
     }
     const engine = engines.find(e => e.trigger === head);
@@ -358,7 +393,7 @@ export default function App() {
     playClick(settings.soundProfile, settings.soundVolume);
 
     setQuery(val);
-    if (!val.trim()) { setMode('default'); setSuggestions([]); return; }
+    if (!val.trim()) { setMode('default'); setRecommendations([]); return; }
     
     // Check if user is typing AI command
     if (val.startsWith('/ai ')) {
@@ -368,10 +403,6 @@ export default function App() {
     }
 
     if (mode !== 'searching') setMode('searching');
-    const t = val.trim().toLowerCase();
-    const res = macrosList.filter(m => `${m.name} ${m.trigger}`.toLowerCase().includes(t))
-      .map(m => ({ label: m.name, value: m.trigger, prefix: m.trigger }));
-    setSuggestions(res);
     setSelIndex(-1);
   };
 
@@ -403,9 +434,24 @@ export default function App() {
         if (e.key === 'ArrowRight') { e.preventDefault(); setPage(p => { const np = Math.min(pageCount - 1, p + 1); setPageDir(1); return np; }); }
       }
       if (mode === 'searching') {
-        if (e.key === 'ArrowDown' && suggestions.length) { e.preventDefault(); setSelIndex(i => Math.min(i + 1, suggestions.length - 1)); }
-        if (e.key === 'ArrowUp' && suggestions.length) { e.preventDefault(); setSelIndex(i => Math.max(i - 1, -1)); }
-        if (e.key === 'Enter') { e.preventDefault(); parseAndRedirect(selIndex >= 0 ? suggestions[selIndex].value : query); }
+        if (e.key === 'ArrowDown' && recommendations.length) { 
+          e.preventDefault(); 
+          setSelIndex(i => Math.min(i + 1, recommendations.length - 1)); 
+        }
+        if (e.key === 'ArrowUp' && recommendations.length) { 
+          e.preventDefault(); 
+          setSelIndex(i => Math.max(i - 1, -1)); 
+        }
+        if (e.key === 'Enter') { 
+          e.preventDefault(); 
+          if (selIndex >= 0 && recommendations[selIndex]) {
+            const chosen = recommendations[selIndex];
+            if (chosen.startsWith('http://') || chosen.startsWith('https://')) redirect(chosen);
+            else parseAndRedirect(chosen);
+          } else {
+            parseAndRedirect(query); 
+          }
+        }
       }
     };
     const kup = (e: KeyboardEvent) => { if (!showSettings && e.key === 'Shift' && mode === 'opened') setMode('default'); };
@@ -419,10 +465,7 @@ export default function App() {
     window.addEventListener('keyup', kup);
     window.addEventListener('contextmenu', rclick);
     return () => { window.removeEventListener('keydown', kdown); window.removeEventListener('keyup', kup); window.removeEventListener('contextmenu', rclick); };
-  }, [mode, query, selIndex, suggestions, showSettings, macrosList, pageCount]);
-
-  const activeMacro = macrosList.find(m => query.trim().split(' ')[0] === m.trigger);
-  const curColor = activeMacro ? activeMacro.color : '#8b5cf6';
+  }, [mode, query, selIndex, recommendations, showSettings, macrosList, pageCount]);
 
   const updateMacro = (index: number, field: keyof Macro, val: string) => {
     const next = [...macrosList];
@@ -483,21 +526,73 @@ export default function App() {
 
       <div className="stage" style={{ visibility: (mode === 'searching' || mode === 'redirected') ? 'visible' : 'hidden' }}>
         <motion.div className="quicklook" animate={qlTextControls} initial={{ x: '-100%' }}>
-          <div className="ql-label" style={{ color: curColor }}>{query}</div>
+          <div className="ql-marquee-wrapper">
+            <div className="ql-marquee-track">
+              {[...Array(7)].map((_, rIdx) => (
+                <div key={rIdx} className={`marquee-line ${rIdx % 2 === 1 ? 'reverse' : ''}`}>
+                  {[...Array(8)].map((_, wIdx) => (
+                    <span key={wIdx} className="marquee-word">{badgeText}</span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
         </motion.div>
         <svg className="svg-morph" style={{ left: 0 }} viewBox="0 0 1 1">
-          <motion.path initial={{ d: qlStages[0] as string }} animate={qlPathControls} fill="transparent" stroke={curColor} strokeWidth="0.015" strokeLinecap="round" strokeLinejoin="round" />
+          <motion.path 
+            initial={{ d: qlStages[0] as string }} 
+            animate={qlPathControls} 
+            fill={curColor} 
+            stroke="#ffffff" 
+            strokeWidth="0.015" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+          />
         </svg>
-        {mode === 'searching' && suggestions.length > 0 && (
-          <div className="suggestions">
-            {suggestions.map((s, i) => (
-              <div key={s.value} className={`item ${i === selIndex ? 'active' : ''}`}>
-                <b>{s.prefix}</b>{s.label}
-              </div>
-            ))}
+
+        {mode === 'searching' && (
+          <div className="search-center-stage" onClick={e => e.stopPropagation()}>
+            <h1 className="search-brand-title" style={{ color: matchedBrand ? '#ffffff' : '#f8fafc' }}>
+              {matchedBrand ? matchedBrand.name : (query.toUpperCase() || 'SEARCH')}
+            </h1>
+            
+            {matchedBrand?.directUrl && (
+              <button
+                className="search-direct-link"
+                style={{ color: matchedBrand.color }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  redirect(matchedBrand.directUrl);
+                }}
+              >
+                🔗 {matchedBrand.directUrl}
+              </button>
+            )}
+
+            <div className="search-recommendations-grid">
+              {recommendations.map((rec, i) => {
+                const isUrl = rec.startsWith('http://') || rec.startsWith('https://');
+                const isActive = i === selIndex;
+                return (
+                  <button
+                    key={rec + i}
+                    className={`recommendation-chip ${isUrl ? 'url-chip' : ''} ${isActive ? 'active' : ''}`}
+                    style={isUrl ? ({ '--brand-color': curColor } as React.CSSProperties) : undefined}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isUrl) redirect(rec);
+                      else parseAndRedirect(rec);
+                    }}
+                  >
+                    {rec}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
+
 
       <div className="menu-layer" style={{ display: mode === 'opened' ? 'flex' : 'none' }}>
         <div className="menu-wrapper top">
@@ -586,6 +681,7 @@ export default function App() {
           </div>
           <div className="ai-chat-input-bar">
             <input 
+              ref={aiInputRef}
               placeholder="Tulis prompt di sini..." 
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
