@@ -201,11 +201,13 @@ body { margin: 0; width: 100vw; height: 100vh; overflow: hidden; background: var
   position: absolute;
   left: 0;
   top: 0;
-  width: 48vw;
+  width: 100vw;
   height: 100vh;
   overflow: hidden;
   z-index: 2;
   pointer-events: none;
+  clip-path: url(#chevronClip);
+  -webkit-clip-path: url(#chevronClip);
 }
 
 .ql-marquee-wrapper {

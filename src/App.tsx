@@ -18,10 +18,10 @@ const getStages = (size: number) => [
 ];
 
 const getQuickLookStages = (curvature: number) => [
-  dC('M', [0, 0.5]) + dC('c', [0, 0, 0, 0, 0, 0.5]) + dC('c', [0, 0, 0, 0, 0, -0.5]) + dC('M', [0, 0.5]) + dC('c', [0, 0, 0, 0, 0, -0.5]) + dC('c', [0, 0, 0, 0, 0, 0.5]),
-  dC('M', [0, 0.5]) + dC('c', [0, 0, 0, 0, 0, 0.5]) + dC('c', [0, -curvature, 0.5, -curvature, 0.5, -0.5]) + dC('M', [0, 0.5]) + dC('c', [0, 0, 0, 0, 0, -0.5]) + dC('c', [0, curvature, 0.5, curvature, 0.5, 0.5]),
-  (ratio: number) => dC('M', [0, 0.5]) + dC('c', [0, 0, 0, 0, 0, 0.5]) + dC('c', [0, -curvature, 0.5, -curvature, ratio * 2, -0.5]) + dC('M', [0, 0.5]) + dC('c', [0, 0, 0, 0, 0, -0.5]) + dC('c', [0, curvature, 0.5, curvature, ratio * 2, 0.5]),
-  (ratio: number) => dC('M', [0, 0.5]) + dC('c', [0, 0, 0, 0, 0, 0.5]) + dC('c', [ratio * 4, 0, ratio * 2, 0, ratio * 2, -0.5]) + dC('M', [0, 0.5]) + dC('c', [0, 0, 0, 0, 0, -0.5]) + dC('c', [ratio * 4, 0, ratio * 2, 0, ratio * 2, 0.5])
+  dC('M', [0, 0]) + dC('L', [0, 1]) + dC('C', [0, 1, 0, 1, 0, 0.5]) + dC('C', [0, 0, 0, 0, 0, 0]) + 'Z',
+  dC('M', [0, 0]) + dC('L', [0, 1]) + dC('C', [0, 1 - curvature, 0.46, 1 - curvature, 0.46, 0.5]) + dC('C', [0.46, curvature, 0, curvature, 0, 0]) + 'Z',
+  (ratio: number) => dC('M', [0, 0]) + dC('L', [0, 1]) + dC('C', [0, 1 - curvature, ratio * 2, 1 - curvature, ratio * 2, 0.5]) + dC('C', [ratio * 2, curvature, 0, curvature, 0, 0]) + 'Z',
+  (ratio: number) => dC('M', [0, 0]) + dC('L', [0, 1]) + dC('C', [ratio * 4, 1, ratio * 2, 1, ratio * 2, 0.5]) + dC('C', [ratio * 2, 0, ratio * 4, 0, ratio * 2, 0]) + 'Z'
 ];
 
 type Mode = 'default' | 'opened' | 'searching' | 'redirected';
@@ -434,6 +434,15 @@ export default function App() {
         if (e.key === 'ArrowRight') { e.preventDefault(); setPage(p => { const np = Math.min(pageCount - 1, p + 1); setPageDir(1); return np; }); }
       }
       if (mode === 'searching') {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          if (matchedBrand) {
+            setQuery(matchedBrand.id);
+          } else if (recommendations.length > 0) {
+            const target = selIndex >= 0 ? recommendations[selIndex] : recommendations[0];
+            if (target && !target.startsWith('http')) setQuery(target);
+          }
+        }
         if (e.key === 'ArrowDown' && recommendations.length) { 
           e.preventDefault(); 
           setSelIndex(i => Math.min(i + 1, recommendations.length - 1)); 
@@ -448,6 +457,8 @@ export default function App() {
             const chosen = recommendations[selIndex];
             if (chosen.startsWith('http://') || chosen.startsWith('https://')) redirect(chosen);
             else parseAndRedirect(chosen);
+          } else if (matchedBrand) {
+            redirect(matchedBrand.directUrl);
           } else {
             parseAndRedirect(query); 
           }
@@ -465,7 +476,7 @@ export default function App() {
     window.addEventListener('keyup', kup);
     window.addEventListener('contextmenu', rclick);
     return () => { window.removeEventListener('keydown', kdown); window.removeEventListener('keyup', kup); window.removeEventListener('contextmenu', rclick); };
-  }, [mode, query, selIndex, recommendations, showSettings, macrosList, pageCount]);
+  }, [mode, query, selIndex, recommendations, matchedBrand, showSettings, macrosList, pageCount]);
 
   const updateMacro = (index: number, field: keyof Macro, val: string) => {
     const next = [...macrosList];
@@ -525,10 +536,15 @@ export default function App() {
       </div>
 
       <div className="stage" style={{ visibility: (mode === 'searching' || mode === 'redirected') ? 'visible' : 'hidden' }}>
-        <motion.div className="quicklook" animate={qlTextControls} initial={{ x: '-100%' }}>
+        <motion.div 
+          className="quicklook" 
+          animate={qlTextControls} 
+          initial={{ x: '-100%' }}
+          style={{ clipPath: 'url(#chevronClip)', WebkitClipPath: 'url(#chevronClip)' }}
+        >
           <div className="ql-marquee-wrapper">
             <div className="ql-marquee-track">
-              {[...Array(7)].map((_, rIdx) => (
+              {[...Array(8)].map((_, rIdx) => (
                 <div key={rIdx} className={`marquee-line ${rIdx % 2 === 1 ? 'reverse' : ''}`}>
                   {[...Array(8)].map((_, wIdx) => (
                     <span key={wIdx} className="marquee-word">{badgeText}</span>
@@ -538,13 +554,18 @@ export default function App() {
             </div>
           </div>
         </motion.div>
-        <svg className="svg-morph" style={{ left: 0 }} viewBox="0 0 1 1">
+        <svg className="svg-morph" style={{ left: 0, width: '100vw', height: '100vh', pointerEvents: 'none' }} viewBox="0 0 1 1" preserveAspectRatio="none">
+          <defs>
+            <clipPath id="chevronClip" clipPathUnits="objectBoundingBox">
+              <motion.path initial={{ d: qlStages[0] as string }} animate={qlPathControls} />
+            </clipPath>
+          </defs>
           <motion.path 
             initial={{ d: qlStages[0] as string }} 
             animate={qlPathControls} 
             fill={curColor} 
             stroke="#ffffff" 
-            strokeWidth="0.015" 
+            strokeWidth="0.008" 
             strokeLinecap="round" 
             strokeLinejoin="round" 
           />

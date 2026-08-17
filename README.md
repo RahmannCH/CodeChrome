@@ -1,15 +1,37 @@
-# CodeChrome 2.0
+# CodeChrome [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/RahmannCH/CodeChrome/pulls) [![Live Demo](https://img.shields.io/badge/demo-live-orange.svg)](https://code-chrome.vercel.app/)
 
-> **Smart, Ultra-Minimalist & Feature-Packed Command Center Startpage for Modern Browsers**
+<p align="center">
+  <img src="public/banner.png" alt="CodeChrome Banner" width="100%" style="border-radius: 12px;" />
+</p>
 
-🌐 **Live Demo:** [https://code-chrome.vercel.app/](https://code-chrome.vercel.app/)  
-👨‍💻 **Creator & Developer:** [Rahman CH](https://github.com/RahmannCH)
+<p align="center">
+  CodeChrome is a <i>powerful</i> and highly <i>functional</i> startpage integrated with <b>AI Assistant</b><br />
+  and hidden under a super <i>minimalistic</i> and <i>animated</i> design.<br /><br />
+  available in <i>static</i>, <i>hosted</i> and <i>github pages</i> options<br /><br />
+  <a href="https://code-chrome.vercel.app/"><b>Live Demo</b></a> | <a href="#-key-features"><b>Features</b></a> | <a href="#-installation--local-development"><b>Installation</b></a>
+</p>
+
+---
+
+## Content
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+  - [Omni Input & Intelligent Command Engine](#1-omni-input--intelligent-command-engine)
+  - [Interactive Floating AI Assistant](#2-interactive-floating-ai-assistant)
+  - [Multi-Page Kinetic Application Drawer](#3-multi-page-kinetic-application-drawer)
+  - [Mechanical Typing Sound FX](#4-mechanical-typing-sound-fx)
+  - [Visual Theme Engine & Shaders](#5-visual-theme-engine--shaders)
+  - [Settings Studio](#6-settings-studio)
+- [Keyboard Shortcuts](#-keyboard-shortcuts)
+- [Tech Stack](#-tech-stack)
+- [Installation & Local Development](#-installation--local-development)
+- [License & Creator](#-license--creator)
 
 ---
 
 ## 🌟 Overview
 
-**CodeChrome** adalah browser startpage modern berbasis React, TypeScript, dan Framer Motion yang dirancang dengan filosofi *keyboard-first*, estetika visual premium, performa instan, serta integrasi AI Assistant cerdas tanpa batas.
+**CodeChrome 2.0** adalah browser startpage modern berbasis React 19, TypeScript, dan Framer Motion yang dirancang dengan filosofi *keyboard-first*, estetika visual premium, performa instan, serta integrasi AI Assistant cerdas tanpa batas.
 
 ---
 
@@ -22,7 +44,8 @@
   * `yt [query]` ➔ Cari video YouTube
   * `gh [query]` ➔ Cari repository GitHub
   * `drive`, `wa`, `gemini`, `ig`, `tt`, `fb`, `sp`, `dc`, `nf`, `itemku` ➔ Langsung menuju aplikasi tujuan.
-* **QuickLook Dynamic Morphing**: Logo Chevron di tengah layar akan bertransformasi mulus ke sisi kiri dengan aksen warna brand dari aplikasi yang dicari.
+* **Chevron Dynamic Morphing**: Logo Chevron di tengah layar bertransformasi mulus ke sisa kiri layar dengan running text marquee miring yang terkliping sempurna di dalam bentuk kurva warna brand.
+* **Tab Autocomplete**: Tekan `TAB` untuk mengautokomplit awalan pencarian menjadi nama brand penuh.
 
 ### 2. 🤖 Interactive Floating AI Assistant
 * **Floating Ripple Action Button**: Tombol robot interaktif di pojok kiri atas yang selalu siap sedia dengan animasi detak halus.
@@ -35,7 +58,7 @@
 
 ### 3. 📱 Multi-Page Kinetic Application Drawer
 * **Split 50/50 Screen Layout**: Jam digital presisi di atas garis tengah dan grid aplikasi di bawah garis tengah.
-* **Official High-Definition Icons**: Menggunakan aset vektor SVG resmi berkualitas tinggi (*Google Drive multi-color triangle, WhatsApp, Gemini, ChatGPT, dll*).
+* **Official High-Definition Icons**: Menggunakan aset vektor SVG resmi berkualitas tinggi (*Google Drive, WhatsApp, Gemini, ChatGPT, dll*).
 * **Smooth Pagination & Gestures**:
   * Tombol navigasi panah `‹` / `›` dan *dot indicators*.
   * Navigasi keyboard `ArrowLeft` / `ArrowRight` saat laci aplikasi dibuka (*tahan tombol `Shift` atau Klik Kanan*).
@@ -66,12 +89,13 @@
 | Shortcut | Aksi |
 | :--- | :--- |
 | `Ketik Langsung` | Membuka pencarian / QuickLook bar otomatis |
+| `Tab` | Autokomplit kata kunci ke nama brand/rekomendasi teratas |
 | `Shift` *(Tahan)* | Membuka laci pintasan aplikasi & jam |
 | `Klik Kanan` | Toggle buka/tutup laci pintasan aplikasi |
 | `ArrowLeft` / `ArrowRight` | Berpindah halaman laci aplikasi |
 | `Double Space` / `/ai ` | Membuka AI Assistant prompt |
 | `Escape` | Membersihkan input & menutup drawer / settings |
-| `Enter` | Eksekusi pencarian atau pembukaan pintasan |
+| `Enter` | Eksekusi pencarian atau pembukaan pintasan brand langsung |
 
 ---
 
