@@ -27,7 +27,7 @@ const getQuickLookStages = (curvature: number) => [
 type Mode = 'default' | 'opened' | 'searching' | 'redirected';
 type Launch = { macro: Macro; x: number; y: number };
 
-const APP_SCHEMA_VERSION = '2026-08-codechrome-pages-v8';
+const APP_SCHEMA_VERSION = '2026-08-codechrome-pages-v9';
 
 function BrandIcon({ macro }: { macro: Macro }) {
   // Always prioritize high-res inline SVGs for built-in apps
@@ -162,6 +162,65 @@ function AppIcon({ name }: { name: string }) {
       return (
         <svg viewBox="0 0 24 24" shapeRendering="geometricPrecision">
           <path fill="#FF7A00" d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.236L19.764 8 12 11.764 4.236 8 12 4.236zM4 9.618l7 3.5V20l-7-3.5V9.618zm9 10.382v-6.882l7-3.5V16.5L13 20z"/>
+        </svg>
+      );
+    case 'friv':
+      return (
+        <svg viewBox="0 0 24 24" shapeRendering="geometricPrecision">
+          <path fill="#FFFFFF" d="M3 4h18v4H7v3h10v4H7v5H3V4z"/>
+          <circle cx="19" cy="18" r="2.5" fill="#8B5CF6"/>
+          <circle cx="14" cy="18" r="1.5" fill="#38BDF8"/>
+        </svg>
+      );
+    case 'poki':
+      return (
+        <svg viewBox="0 0 24 24" shapeRendering="geometricPrecision">
+          <path fill="#38BDF8" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm-2 3.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-4 4.5h4c0 1.1-.9 2-2 2s-2-.9-2-2z"/>
+        </svg>
+      );
+    case 'pinterest':
+    case 'pin':
+      return (
+        <svg viewBox="0 0 24 24" shapeRendering="geometricPrecision">
+          <path fill="#BD081C" d="M12 0a12 12 0 0 0-4.37 23.18c-.06-.99-.12-2.52.02-3.61.13-.99.85-6.19.85-6.19s-.22-.44-.22-1.08c0-1.01.59-1.77 1.32-1.77.62 0 .92.47.92 1.03 0 .63-.4 1.56-.61 2.43-.17.73.37 1.32 1.09 1.32 1.31 0 2.32-1.38 2.32-3.37 0-1.76-1.27-2.99-3.08-2.99-2.09 0-3.32 1.57-3.32 3.19 0 .63.24 1.31.55 1.68.06.07.07.14.05.21-.06.24-.19.78-.22.89-.04.14-.12.17-.28.1-1.04-.48-1.69-2-1.69-3.22 0-2.62 1.9-5.02 5.48-5.02 2.88 0 5.11 2.05 5.11 4.79 0 2.86-1.8 5.16-4.3 5.16-.84 0-1.63-.44-1.9-.96l-.52 1.97c-.19.72-.7 1.62-1.04 2.18A12.02 12.02 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0z"/>
+        </svg>
+      );
+    case 'telegram':
+    case 'tg':
+      return (
+        <svg viewBox="0 0 24 24" shapeRendering="geometricPrecision">
+          <path fill="#229ED9" d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-1.97 9.28c-.15.65-.53.81-1.08.51l-3-2.21-1.45 1.39c-.16.16-.3.3-.61.3l.22-3.05 5.56-5.02c.24-.22-.05-.34-.38-.13l-6.87 4.33-2.96-.92c-.64-.2-.66-.64.13-.95l11.58-4.46c.54-.2 1.01.13.83.93z"/>
+        </svg>
+      );
+    case 'reddit':
+    case 'r':
+      return (
+        <svg viewBox="0 0 24 24" shapeRendering="geometricPrecision">
+          <path fill="#FF4500" d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.196-.491.956 0 1.73.774 1.73 1.73 0 .684-.396 1.277-.969 1.56.02.193.03.388.03.587 0 2.977-3.46 5.39-7.729 5.39-4.268 0-7.729-2.413-7.729-5.39 0-.195.01-.39.03-.583A1.734 1.734 0 0 1 4.3 12c0-.956.774-1.73 1.73-1.73.466 0 .888.182 1.196.49 1.193-.856 2.847-1.417 4.67-1.487l.951-4.463a.468.468 0 0 1 .557-.361l3.076.652c.117-.213.346-.357.61-.357zM8.5 13.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm-5.7 3.2c-.1-.1-.1-.3 0-.4.8-.8 2.6-.8 3.4 0 .1.1.1.3 0 .4-.1.1-.3.1-.4 0-.6-.6-2-.6-2.6 0-.1.1-.3.1-.4 0z"/>
+        </svg>
+      );
+    case 'linkedin':
+    case 'in':
+      return (
+        <svg viewBox="0 0 24 24" shapeRendering="geometricPrecision">
+          <path fill="#0A66C2" d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.27c-.97 0-1.75-.79-1.75-1.76s.78-1.75 1.75-1.75 1.75.78 1.75 1.75-.78 1.76-1.75 1.76zm13.5 11.27h-3v-5.6c0-1.34-.03-3.07-1.87-3.07-1.87 0-2.16 1.46-2.16 2.97v5.7h-3v-10h2.88v1.36h.04c.4-.76 1.38-1.56 2.84-1.56 3.04 0 3.6 2 3.6 4.6v5.6z"/>
+        </svg>
+      );
+    case 'shopee':
+      return (
+        <svg viewBox="0 0 24 24" shapeRendering="geometricPrecision">
+          <path fill="#EE4D2D" d="M19.5 7.5h-2.1c-.4-2.8-2.6-5-5.4-5s-5 2.2-5.4 5H4.5c-.8 0-1.5.7-1.5 1.5l1.5 12c.1.8.8 1.5 1.6 1.5h11.8c.8 0 1.5-.7 1.6-1.5l1.5-12c0-.8-.7-1.5-1.5-1.5zm-7.5-3.5c1.9 0 3.5 1.5 3.9 3.5H8.1c.4-2 2-3.5 3.9-3.5zm0 14c-2.2 0-3.6-1.3-3.6-2.5 0-.3.2-.5.5-.5.3 0 .4.2.5.3.6.8 1.5 1.2 2.6 1.2 1.4 0 2.2-.8 2.2-1.7 0-1.1-1-1.5-2.2-1.9-1.7-.6-3.2-1.2-3.2-3 0-1.6 1.3-2.9 3.2-2.9 1.8 0 3.1 1 3.1 2.2 0 .3-.2.5-.5.5-.2 0-.4-.1-.5-.3-.5-.7-1.3-1-2.1-1-1.1 0-1.8.7-1.8 1.5 0 1 .9 1.4 2 1.8 1.9.7 3.4 1.3 3.4 3.1 0 1.8-1.4 3.2-3.6 3.2z"/>
+        </svg>
+      );
+    case 'figma':
+    case 'fig':
+      return (
+        <svg viewBox="0 0 24 24" shapeRendering="geometricPrecision">
+          <path fill="#F24E1E" d="M8 24c-2.21 0-4-1.79-4-4s1.79-4 4-4h4v4c0 2.21-1.79 4-4 4z"/>
+          <path fill="#0ACF83" d="M4 12c0-2.21 1.79-4 4-4h4v8H8a4 4 0 0 1-4-4z"/>
+          <path fill="#A259FF" d="M4 4c0-2.21 1.79-4 4-4h4v8H8a4 4 0 0 1-4-4z"/>
+          <path fill="#FF7262" d="M12 0h4a4 4 0 0 1 4 4 4 4 0 0 1-4 4h-4V0z"/>
+          <path fill="#1ABCFE" d="M20 12a4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4h4v4z"/>
         </svg>
       );
     default:
@@ -656,6 +715,7 @@ export default function App() {
                   <div className="card-bg" />
                   <div className="card-plate" />
                   <div className="card-logo"><BrandIcon macro={m} /></div>
+                  <span className="card-tooltip">{m.name}</span>
                 </motion.button>
               ))}
             </motion.div>

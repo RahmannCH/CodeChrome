@@ -43,7 +43,7 @@
   * `g [query]` ➔ Cari via Google
   * `yt [query]` ➔ Cari video YouTube
   * `gh [query]` ➔ Cari repository GitHub
-  * `drive`, `wa`, `gemini`, `ig`, `tt`, `fb`, `sp`, `dc`, `nf`, `itemku` ➔ Langsung menuju aplikasi tujuan.
+  * `tt`, `yt`, `wa`, `drive`, `gh`, `gemini`, `ai`, `9r`, `ig`, `tg`, `fb`, `sp`, `dc`, `nf`, `fig`, `itemku`, `friv`, `poki`, `pin`, `r`, `in`, `shopee` ➔ Langsung menuju aplikasi tujuan.
 * **Chevron Dynamic Morphing**: Logo Chevron di tengah layar bertransformasi mulus ke sisa kiri layar dengan running text marquee miring yang terkliping sempurna di dalam bentuk kurva warna brand.
 * **Tab Autocomplete**: Tekan `TAB` untuk mengautokomplit awalan pencarian menjadi nama brand penuh.
 
@@ -56,9 +56,13 @@
 * **Real-time SSE Response Streaming**: Jawaban AI mengalir huruf demi huruf secara instan.
 * **Alternative Quick Trigger**: Ketik `/ai [pertanyaan]` pada layar utama atau tekan tombol `Spacebar` 2x berturut-turut.
 
-### 3. 📱 Multi-Page Kinetic Application Drawer
+### 3. 📱 22+ Preloaded Multi-Page Kinetic Application Drawer
 * **Split 50/50 Screen Layout**: Jam digital presisi di atas garis tengah dan grid aplikasi di bawah garis tengah.
-* **Official High-Definition Icons**: Menggunakan aset vektor SVG resmi berkualitas tinggi (*Google Drive, WhatsApp, Gemini, ChatGPT, dll*).
+* **Tiga Halaman Pintasan Penuh Kategori**:
+  * **Page 1 (Core & AI)**: TikTok, YouTube, WhatsApp, Drive, GitHub, Gemini, ChatGPT, 9Router.
+  * **Page 2 (Social & Work)**: Instagram, Telegram, Facebook, Spotify, Discord, Netflix, Figma, Itemku.
+  * **Page 3 (Games, Discovery & Shopping)**: Friv Games, Poki Games, Pinterest, Reddit, LinkedIn, Shopee.
+* **Official High-Definition Icons**: Menggunakan aset vektor SVG resmi berkualitas tinggi (*Google Drive multi-color triangle, WhatsApp, Gemini, ChatGPT, Figma, Telegram, Poki, Friv, dll*).
 * **Smooth Pagination & Gestures**:
   * Tombol navigasi panah `‹` / `›` dan *dot indicators*.
   * Navigasi keyboard `ArrowLeft` / `ArrowRight` saat laci aplikasi dibuka (*tahan tombol `Shift` atau Klik Kanan*).
