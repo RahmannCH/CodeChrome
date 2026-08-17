@@ -1,7 +1,7 @@
 # CodeChrome [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/RahmannCH/CodeChrome/pulls) [![Live Demo](https://img.shields.io/badge/demo-live-orange.svg)](https://code-chrome.vercel.app/)
 
 <p align="center">
-  <img src="public/banner.png" alt="CodeChrome Banner" width="100%" style="border-radius: 12px;" />
+  <img src="https://raw.githubusercontent.com/RahmannCH/CodeChrome/main/public/banner.png" alt="CodeChrome Banner" width="100%" style="border-radius: 12px;" />
 </p>
 
 <p align="center">
