@@ -27,11 +27,28 @@ const getQuickLookStages = (curvature: number) => [
 type Mode = 'default' | 'opened' | 'searching' | 'redirected';
 type Launch = { macro: Macro; x: number; y: number };
 
-const APP_SCHEMA_VERSION = '2026-08-codechrome-pages-v9';
+const APP_SCHEMA_VERSION = '2026-08-codechrome-pages-v10';
 
 function BrandIcon({ macro }: { macro: Macro }) {
   // Always prioritize high-res inline SVGs for built-in apps
   return <AppIcon name={macro.icon} />;
+}
+
+function SimariIcon() {
+  const [failed, setFailed] = useState(false);
+
+  if (failed) {
+    return (
+      <svg viewBox="0 0 24 24" shapeRendering="geometricPrecision">
+        <path fill="#F5C400" d="M12 2 2 6.2v6.3c0 5 4.3 9.1 10 10.5 5.7-1.4 10-5.5 10-10.5V6.2L12 2z"/>
+        <text x="12" y="17" textAnchor="middle" fontSize="11" fontWeight="700" fill="#1B1B1B" fontFamily="inherit">S</text>
+      </svg>
+    );
+  }
+
+  return (
+    <img src="/ulm-logo.png" alt="Simari ULM" onError={() => setFailed(true)} />
+  );
 }
 
 function AppIcon({ name }: { name: string }) {
@@ -221,6 +238,16 @@ function AppIcon({ name }: { name: string }) {
           <path fill="#A259FF" d="M4 4c0-2.21 1.79-4 4-4h4v8H8a4 4 0 0 1-4-4z"/>
           <path fill="#FF7262" d="M12 0h4a4 4 0 0 1 4 4 4 4 0 0 1-4 4h-4V0z"/>
           <path fill="#1ABCFE" d="M20 12a4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4h4v4z"/>
+        </svg>
+      );
+    case 'simari':
+    case 'si':
+      return <SimariIcon />;
+    case 'cbt':
+      return (
+        <svg viewBox="0 0 24 24" shapeRendering="geometricPrecision">
+          <path fill="#0F7B6C" d="M12 2 2 6.2v6.3c0 5 4.3 9.1 10 10.5 5.7-1.4 10-5.5 10-10.5V6.2L12 2z"/>
+          <path fill="#FFFFFF" d="M10.6 15.4 6.7 11.5a1 1 0 0 1 1.4-1.4l2.5 2.5 5.3-5.3a1 1 0 1 1 1.4 1.4l-6 6a1 1 0 0 1-1.4 0z"/>
         </svg>
       );
     default:
@@ -433,7 +460,8 @@ export default function App() {
     const [head, ...tail] = txt.split(/\s+/);
     const macro = macrosList.find(m => m.trigger === head);
     if (macro) {
-      if (!tail.length) redirect(macro.url);
+      // Portal-only links (searchable: false) ignore trailing words.
+      if (!tail.length || macro.searchable === false) redirect(macro.url);
       else redirect(`${macro.url}/search?q=${encodeURIComponent(tail.join(' '))}`);
       return;
     }

@@ -6,6 +6,12 @@ export type Macro = {
   icon: string;
   iconUrl?: string;
   key?: string;
+  /**
+   * true  -> trigger + query becomes `${url}/search?q=...` (default behaviour)
+   * false -> portal/login-only link; any trailing words are ignored and the
+   *          base URL is opened as-is.
+   */
+  searchable?: boolean;
 };
 
 export type BrandPreset = {
@@ -20,27 +26,29 @@ export type BrandPreset = {
 };
 
 export const macros: Macro[] = [
-  // Page 1: Daily Core & Productivity
+  // Page 1: Core & Akademik (baris 2 = GitHub, Simari, CBT, 9Router)
   { name: 'TikTok', trigger: 'tt', url: 'https://tiktok.com', color: '#00F2FE', icon: 'tiktok', key: '1' },
   { name: 'YouTube', trigger: 'yt', url: 'https://youtube.com', color: '#FF0000', icon: 'youtube', key: '2' },
   { name: 'WhatsApp', trigger: 'wa', url: 'https://web.whatsapp.com', color: '#25D366', icon: 'whatsapp', key: '3' },
   { name: 'Drive', trigger: 'drive', url: 'https://drive.google.com', color: '#0F9D58', icon: 'drive', key: '4' },
   { name: 'GitHub', trigger: 'gh', url: 'https://github.com', color: '#181717', icon: 'github', key: '5' },
-  { name: 'Gemini', trigger: 'gemini', url: 'https://gemini.google.com', color: '#1C69FF', icon: 'gemini', key: '6' },
-  { name: 'ChatGPT', trigger: 'ai', url: 'https://chatgpt.com', color: '#10A37F', icon: 'chatgpt', key: '7' },
+  { name: 'Simari', trigger: 'si', url: 'https://simari.ulm.ac.id/site/home', color: '#F5C400', icon: 'simari', key: '6', searchable: false },
+  { name: 'CBT', trigger: 'cbt', url: 'https://cbt.ulm.ac.id/course/', color: '#0F7B6C', icon: 'cbt', key: '7', searchable: false },
   { name: '9Router', trigger: '9r', url: 'http://localhost:20128/dashboard', color: '#6366F1', icon: 'router', key: '8' },
 
-  // Page 2: Social Media, Media & Communication
+  // Page 2: Social, Work & AI (AI naik ke sini)
   { name: 'Instagram', trigger: 'ig', url: 'https://instagram.com', color: '#E4405F', icon: 'instagram', key: 'q' },
   { name: 'Telegram', trigger: 'tg', url: 'https://web.telegram.org', color: '#229ED9', icon: 'telegram', key: 'w' },
   { name: 'Facebook', trigger: 'fb', url: 'https://facebook.com', color: '#1877F2', icon: 'facebook', key: 'e' },
   { name: 'Spotify', trigger: 'sp', url: 'https://open.spotify.com', color: '#1DB954', icon: 'spotify', key: 'r' },
   { name: 'Discord', trigger: 'dc', url: 'https://discord.com/app', color: '#5865F2', icon: 'discord', key: 't' },
-  { name: 'Netflix', trigger: 'nf', url: 'https://netflix.com', color: '#E50914', icon: 'netflix', key: 'y' },
   { name: 'Figma', trigger: 'fig', url: 'https://figma.com', color: '#F24E1E', icon: 'figma', key: 'u' },
-  { name: 'Itemku', trigger: 'itemku', url: 'https://itemku.com', color: '#FF7A00', icon: 'itemku', key: 'i' },
+  { name: 'ChatGPT', trigger: 'ai', url: 'https://chatgpt.com', color: '#10A37F', icon: 'chatgpt', key: 'o' },
+  { name: 'Gemini', trigger: 'gemini', url: 'https://gemini.google.com', color: '#1C69FF', icon: 'gemini', key: 'p' },
 
-  // Page 3: Gaming, Discovery, Work & Shopping
+  // Page 3: Media, Games, Discovery & Shopping
+  { name: 'Netflix', trigger: 'nf', url: 'https://netflix.com', color: '#E50914', icon: 'netflix', key: 'y' },
+  { name: 'Itemku', trigger: 'itemku', url: 'https://itemku.com', color: '#FF7A00', icon: 'itemku', key: 'i' },
   { name: 'Friv', trigger: 'friv', url: 'https://www.friv.com', color: '#8B5CF6', icon: 'friv', key: 'a' },
   { name: 'Poki', trigger: 'poki', url: 'https://poki.com', color: '#38BDF8', icon: 'poki', key: 's' },
   { name: 'Pinterest', trigger: 'pin', url: 'https://pinterest.com', color: '#BD081C', icon: 'pinterest', key: 'd' },
@@ -217,6 +225,25 @@ export const brandPresets: BrandPreset[] = [
     ],
   },
   {
+    // Diletakkan SETELAH preset huruf-S lain (spotify/shopee) agar ketikan 's'
+    // tetap ke Spotify. Exact match 'si' tetap kena karena dicek duluan.
+    id: 'simari',
+    name: 'SIMARI',
+    trigger: 'si',
+    aliases: ['simari', 'si', 'sima', 'simari ulm', 'simari ulm.ac.id'],
+    color: '#F5C400',
+    directUrl: 'https://simari.ulm.ac.id/site/home',
+    marqueeText: 'SIMARI',
+    recommendations: [
+      'simari',
+      'https://simari.ulm.ac.id/site/home',
+      'simari ulm',
+      'simari login',
+      'simari ulm Password',
+      'simari Absensi',
+    ],
+  },
+  {
     id: 'figma',
     name: 'FIGMA',
     trigger: 'fig',
@@ -280,6 +307,26 @@ export const brandPresets: BrandPreset[] = [
       'chatgpt 4o',
       'chatgpt login',
       'openai api',
+    ],
+  },
+  {
+    // Diletakkan SETELAH chatgpt agar ketikan 'c' tetap ke ChatGPT.
+    // Exact match 'cbt' tetap kena karena dicek duluan.
+    id: 'cbt',
+    name: 'CBT',
+    trigger: 'cbt',
+    aliases: ['cbt', 'cobate', 'cbt ulm', 'learning center ulm'],
+    color: '#0F7B6C',
+    directUrl: 'https://cbt.ulm.ac.id/course/',
+    marqueeText: 'CBT ULM',
+    recommendations: [
+      'cbt ulm',
+      'https://cbt.ulm.ac.id/course/',
+      'cbt',
+      'cobate ulm',
+      'learning center ulm',
+      'cbt login',
+      'cbt jadwal',
     ],
   },
   {
